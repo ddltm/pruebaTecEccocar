@@ -7,12 +7,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import com.pruebamisiones.apirest.entity.Mision;
-import com.pruebamisiones.apirest.utils.Constantes;
-import com.pruebamisiones.swapi.API;
-import com.pruebamisiones.swapi.GetRequestRepository;
-import com.google.gson.JsonObject;
-import com.pruebamisiones.apirest.dao.MisionDAO;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -20,6 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.pruebamisiones.apirest.dao.MisionDAO;
+import com.pruebamisiones.apirest.entity.Mision;
+import com.pruebamisiones.swapi.API;
+import com.pruebamisiones.swapi.GetRequestRepository;
 
 @Service
 public class MisionServiceImpl implements MisionService {
@@ -100,12 +101,21 @@ public class MisionServiceImpl implements MisionService {
         
         JsonObject nave = repository.innerRequest("https://swapi.dev/api/starships/"+idNave+"/");
     	
-    	//Si la nave ha tenido pilotos, estos deben estar.
+    	//Si la nave ha tenido pilotos, estos deben estar. 
+       	JsonArray pilotos = nave.get("pilots").getAsJsonArray();
+       	if (pilotos.size() > 0) {
+       		boolean pilotNotPresent = true;
+       		for (int i=0; i<pilotos.size(); i++) {
+       			String idPilot = pilotos.get(i).getAsString().replace("https://swapi.dev/api/people/","").replace("/","");
+       			if (capitanes.contains(idPilot)) {
+       				pilotNotPresent = false;
+       			}
+       		}
+           	if (pilotNotPresent) {
+           		return false;
+           	}
+       	}
         
-        //String pilotos = nave.get("pilots").getAsString();
-    	String pilotos = Constantes.getNavepilotos(idNave);        
-        
-    	
     	/*Validación: El número de capitanes + tripulación debe ser mayor o igual a la tripulación (crew) que requiere la nave
     	 * 
     	 * Se recoge el valor crew de la nave teniendo en cuenta el separador de miles y que puede venir informado como rango.
@@ -118,7 +128,6 @@ public class MisionServiceImpl implements MisionService {
         }else {
         	crew = Integer.parseInt(crewSwapi.substring(0,crewSwapi.indexOf("-")));
         }
-    	//int crew = Integer.parseInt(Constantes.getNavetripulacion(idNave));
     	if ((capitanesArray.length + numTripulacion) < crew) {
     		return false;
     	}
@@ -135,7 +144,6 @@ public class MisionServiceImpl implements MisionService {
         	passengers=Integer.parseInt(passengersSwapi);
         }
     	
-    	//int passengers = Integer.parseInt(Constantes.getNavepasajeros(idNave));
     	if ((capitanesArray.length + numTripulacion) > (crew + passengers)) {
     		return false;
     	}
@@ -171,7 +179,6 @@ public class MisionServiceImpl implements MisionService {
     	for (String idPlaneta : planetasArray) {
             JsonObject planeta = repository.innerRequest("https://swapi.dev/api/planets/"+Integer.parseInt(idPlaneta)+"/");
             distanciaTotal = distanciaTotal + planeta.get("diameter").getAsInt();
-    		//distanciaTotal = distanciaTotal + Constantes.getPlanetadiametro(Integer.parseInt(idPlaneta));
     	}
     	
     	float tiempo = (float) distanciaTotal / (valorTripulacion+valorCapitanes);
@@ -188,7 +195,7 @@ public class MisionServiceImpl implements MisionService {
     @SuppressWarnings("unchecked")
 	public ResponseEntity<Object> salidaMisiones(List<Mision> ListMisiones)
     {
-        //Get data from service layer into entityList.
+    	/*Se prepara un objeto misiones para devolver con los datos solicitados en el enunciado de la prueba.*/
         List<JSONObject> misiones = new ArrayList<JSONObject>();
         for (Mision n : ListMisiones) {
       	  	API api = new API();
@@ -205,10 +212,6 @@ public class MisionServiceImpl implements MisionService {
             nave.put("nombre", naveSwapi.get("name").getAsString());
             nave.put("tripulacion", naveSwapi.get("crew").getAsString());
           	nave.put("pasajeros", naveSwapi.get("passengers").getAsString());
-            
-            /*nave.put("nombre", Constantes.getNavenombre(n.getIdNave()));
-            nave.put("tripulacion", Constantes.getNavetripulacion(n.getIdNave()));
-            nave.put("pasajeros", Constantes.getNavepasajeros(n.getIdNave()));*/
             mision.put("nave", nave);
             
             //Capitanes
@@ -219,7 +222,6 @@ public class MisionServiceImpl implements MisionService {
             	capitan.put("id", c);
             	JsonObject capSwapi = repository.innerRequest("https://swapi.dev/api/people/"+c+"/");
             	capitan.put("nombre", capSwapi.get("name").getAsString());
-            	//capitan.put("nombre", Constantes.getCapitannombre(Integer.parseInt(c)));
             	capitanes.add(capitan);
             }
             
@@ -234,8 +236,6 @@ public class MisionServiceImpl implements MisionService {
             	JsonObject capSwapi = repository.innerRequest("https://swapi.dev/api/planets/"+p+"/");
             	planeta.put("nombre", capSwapi.get("name").getAsString());
             	planeta.put("diametro", capSwapi.get("diameter").getAsString());
-            	/*planeta.put("nombre", Constantes.getPlanetanombre(Integer.parseInt(p)));
-            	planeta.put("diametro", Constantes.getPlanetadiametro(Integer.parseInt(p)));*/
             	planetas.add(planeta);
             }
             
