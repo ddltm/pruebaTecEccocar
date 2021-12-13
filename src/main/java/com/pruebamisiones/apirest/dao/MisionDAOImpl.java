@@ -20,11 +20,8 @@ public class MisionDAOImpl implements MisionDAO{
     @Override
     public List<Mision> findAll() {
         Session currentSession = entityManager.unwrap(Session.class);
-
         Query<Mision> theQuery = currentSession.createQuery("From Mision");
-
         List<Mision> Misiones = theQuery.getResultList();
-
         return Misiones;
 
     }
@@ -32,12 +29,9 @@ public class MisionDAOImpl implements MisionDAO{
     @Override
     public List<Mision> findByCpt(int capitan, String fecInicio) {
         Session currentSession = entityManager.unwrap(Session.class);
-        
         Query<Mision> theQuery;
       	theQuery = currentSession.createQuery("From Mision where instr(capitanes,"+capitan+")>0 and feciniciomision<'"+fecInicio+"' and fecfinmision>'"+fecInicio+"'");
-
         List<Mision> Misiones = theQuery.getResultList();
-        
         return Misiones;
     }
     
@@ -47,6 +41,7 @@ public class MisionDAOImpl implements MisionDAO{
         String[] capitanesArray = capitanes.split(",");
         String condicion = "";
         Query<Mision> theQuery;
+        
         for (int i=0; i<capitanesArray.length; i++) {
         	if (i==capitanesArray.length-1) {
         		condicion = condicion + "instr(capitanes,"+capitanesArray[i]+")>0";
@@ -56,16 +51,13 @@ public class MisionDAOImpl implements MisionDAO{
         }
         
         theQuery = currentSession.createQuery("From Mision where "+condicion);
-        
         List<Mision> Misiones = theQuery.getResultList();
-        
         return Misiones;
     }
 
     @Override
     public void save(Mision Mision) {
         Session currentSession = entityManager.unwrap(Session.class);
-
         currentSession.saveOrUpdate(Mision);  
 
     }

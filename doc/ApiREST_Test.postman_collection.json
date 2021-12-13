@@ -1,0 +1,209 @@
+{
+	"info": {
+		"_postman_id": "59686fd6-fd95-4a4f-84fd-4c903d8a93e4",
+		"name": "ApiREST_Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "ListaMisiones",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8080/api/ListaMisiones",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"ListaMisiones"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListaMisiones_Capitan",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": null
+			},
+			"response": []
+		},
+		{
+			"name": "NuevaMision_TripulacionKO",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8080/api/NuevaMision/2020-04-20 08:00:00/10/7,5/-1/3,4,5,6",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"NuevaMision",
+						"2020-04-20 08:00:00",
+						"10",
+						"7,5",
+						"-1",
+						"3,4,5,6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NuevaMision_PilotoKO",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8080/api/NuevaMision/2020-04-20 08:00:00/10/7,5/0/3,4,5,6",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"NuevaMision",
+						"2020-04-20 08:00:00",
+						"10",
+						"7,5",
+						"0",
+						"3,4,5,6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NuevaMision_Tripul+CptMenorKO",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8080/api/NuevaMision/2020-04-20 08:00:00/10/7,5,13/0/3,4,5,6",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"NuevaMision",
+						"2020-04-20 08:00:00",
+						"10",
+						"7,5,13",
+						"0",
+						"3,4,5,6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NuevaMision_MasTripul+CptKO",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8080/api/NuevaMision/2020-04-20 08:00:00/10/7,5,13/10/3,4,5,6",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"NuevaMision",
+						"2020-04-20 08:00:00",
+						"10",
+						"7,5,13",
+						"10",
+						"3,4,5,6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NuevaMision_CapitanAsignadoKO",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8080/api/NuevaMision/2020-04-20 08:00:00/10/7,5,13/5/3,4,5,6",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"NuevaMision",
+						"2020-04-20 08:00:00",
+						"10",
+						"7,5,13",
+						"5",
+						"3,4,5,6"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NuevaMision_OK",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8080/api/NuevaMision/2019-04-20 08:00:00/10/7,5,13/6/3,4,5,6",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"NuevaMision",
+						"2019-04-20 08:00:00",
+						"10",
+						"7,5,13",
+						"6",
+						"3,4,5,6"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

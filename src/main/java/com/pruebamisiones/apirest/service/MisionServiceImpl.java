@@ -6,7 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -41,8 +43,11 @@ public class MisionServiceImpl implements MisionService {
     }
 
     @Override
-    public void save(String fechaInicio, int idNave, String capitanes,int numTripulacion,String planetas) {
-    	if(validate(fechaInicio,idNave,capitanes,numTripulacion,planetas)) {
+    public ResponseEntity<Object> save(String fechaInicio, int idNave, String capitanes,int numTripulacion,String planetas) {
+    	String validacion = validate(fechaInicio,idNave,capitanes,numTripulacion,planetas);
+    	Map<String, Object> map = new HashMap<String, Object>();
+    	
+    	if(validacion.equals("")) {
 
     		Mision mision = new Mision();
     		
@@ -69,30 +74,42 @@ public class MisionServiceImpl implements MisionService {
     		mision.setFecFinMision(fecFin);
     		
         	MisionDAO.save(mision);
+        	
+        	map.put("message", "Se ha insertado la misión correctamente.");
+            return new ResponseEntity<Object>(map,HttpStatus.OK);
+        	
     	}else {
-    		System.out.println("No Valido");
+        	
+        	map.put("message", validacion);
+            return new ResponseEntity<Object>(map,HttpStatus.BAD_REQUEST);
     	}
-
 
     }
     
-    private boolean validate(String fechaInicio, int idNave, String capitanes,int numTripulacion,String planetas) {
+    private String validate(String fechaInicio, int idNave, String capitanes,int numTripulacion,String planetas) {
     	String[] capitanesArray = capitanes.split(",");
     	String[] planetasArray = planetas.split(",");
-        
+
     	//Validación: La fecha de inicio y el identificador de la nave vienen informados.
-    	if (fechaInicio.isEmpty() || idNave == 0) {
-    		return false;
+    	if (fechaInicio.isEmpty()) {
+    		return "La fecha de inicio no viene informada.";
+    	}
+    	
+    	if (idNave == 0) {
+    		return "El identificador de la nave no viene informado.";
     	}
     	
     	//Validación: Hay por lo menos un capitan y un planeta
-    	if(capitanesArray.length == 0 || planetasArray.length == 0) {
-    		return false;
+    	if(capitanesArray.length == 0) { 
+    		return "Debe haber por lo menos un capitan informado";
     	}
     	
+    	if (planetasArray.length == 0) {
+    		return "Debe haber por lo menos un planeta informado";
+    	}
     	//Validación: La tripulación puede ser 0 o mayor.
     	if (numTripulacion < 0) {
-    		return false;
+    		return "La tripulación debe ser 0 o mayor.";
     	}
     	
     	//Recuperamos la información de la nave
@@ -112,7 +129,7 @@ public class MisionServiceImpl implements MisionService {
        			}
        		}
            	if (pilotNotPresent) {
-           		return false;
+           		return "No hay ningún piloto asociado a la nave asignado a la misión";
            	}
        	}
         
@@ -129,7 +146,7 @@ public class MisionServiceImpl implements MisionService {
         	crew = Integer.parseInt(crewSwapi.substring(0,crewSwapi.indexOf("-")));
         }
     	if ((capitanesArray.length + numTripulacion) < crew) {
-    		return false;
+    		return "La cantidad de capitanes + tripulación es menor que la tripulación de la nave";
     	}
     	
     	/* Validacion: c + d debe ser menor o igual a la tripulación (crew) + los pasajeros (passengers) de la nave.
@@ -145,7 +162,7 @@ public class MisionServiceImpl implements MisionService {
         }
     	
     	if ((capitanesArray.length + numTripulacion) > (crew + passengers)) {
-    		return false;
+    		return "La cantidad de capitanes + tripulación es mayor que la tripulación de la nave + los pasajeros.";
     	}
     	
     	/* Validación: Los capitanes no puede estar asignados a más de una misión.
@@ -156,12 +173,13 @@ public class MisionServiceImpl implements MisionService {
     	for (String idCapitan : capitanesArray) {
     		List<Mision> listMisions= MisionDAO.findByCpt(Integer.parseInt(idCapitan),fechaInicio);
     		if (listMisions.size() > 0) {
-    			return false;
+    			return "Hay algún capitán asignado ya a otra misión en el mismo periodo.";
     		}
 		}
     	
-    	return true;
+    	return "";
     }
+    
     
     private int calculoTiempoMision(int idNave, String capitanes,int numTripulacion,String planetas) {
     	String[] planetasArray = planetas.split(",");
@@ -245,6 +263,7 @@ public class MisionServiceImpl implements MisionService {
             
             misiones.add(mision);
         }
+
         return new ResponseEntity<Object>(misiones, HttpStatus.OK);
     } 
 }

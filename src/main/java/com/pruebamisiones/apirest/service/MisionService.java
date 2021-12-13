@@ -12,7 +12,7 @@ public interface MisionService {
 
     public List<Mision> findByCpts(String capitanes);
 
-    public void save(String fechaInicio, int idNave, String capitanes,int numTripulacion,String planetas);
+    public ResponseEntity<Object> save(String fechaInicio, int idNave, String capitanes,int numTripulacion,String planetas);
     
     public ResponseEntity<Object> salidaMisiones(List<Mision> ListMisiones);
 
